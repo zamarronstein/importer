@@ -383,6 +383,8 @@ class SimpleXLSX {
 
 			$aI['D'] = $vZ;
 
+			date_default_timezone_set('America/Mexico_City');
+
 			// DOS to UNIX timestamp
 			$aI['T'] = mktime( ( $aP['FT'] & 0xf800 ) >> 11,
 				( $aP['FT'] & 0x07e0 ) >> 5,

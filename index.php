@@ -1,57 +1,35 @@
 <?php
 
-require_once("simplexlsx/simplexlsx.class.php");
+require_once "importer.php";
+require_once "db_connection.php";
 
-$rows_to_omit = 2;
-
-function is_valid_row($r) {
-    $is_valid = FALSE;
-
-    $name = trim(strtoupper($r[2]));
-
-    $position = stripos($name, "grupo");
-
-    if ($position === FALSE) return TRUE;
-
-    return $is_valid;
+function is_alpha($input) {
+    
+    return preg_match('/^[a-z\s]*$/i', $input);
 }
 
-function clean_name($name) {
+$a_data = get_data("files/students.xlsx");
 
-    $name = trim($name);
+if (!empty($a_data)) {
 
-    if (count($name) > 0) {
-        $s_numeric = substr($name, 0, 1);
-        if (is_numeric($s_numeric)) {
-            $space_pos = strpos($name, " ");
-            $name = substr($name, $space_pos + 1);
-            /*
-            $car = substr($name, 0, 1);
-            echo ord($car) . "<br>";
-            */
-            $name = str_replace("" . chr(194), "", $name);
-            $name = str_replace("" . chr(160), "", $name);
+    $conn = get_connection();
+    mysqli_set_charset($conn,"utf8");
+    foreach ($a_data as $row) {
+        // row[2] -> nombre del alumno
+        // row[3] -> primer apellido
+        // row[4] -> segundo apellido
 
+        if (ord(substr($row[2], 0, 1)) == 0) continue;
+
+        $sql = "INSERT IGNORE INTO persona (id_persona, tipo_persona, nombre, a_paterno, a_materno, nacionalidad, activo) VALUES ";
+        $sql .= "(0, 'Alumno', '{$row[2]}', '{$row[3]}', '{$row[4]}', 'Mexicana', '1');";
+
+        if ($conn->query($sql) === true) {
+            //echo "Data imported correctly!!<br>";
+        } else {
+            echo "<br>Something was wrong: " . $conn->error;
         }
     }
 
-    return trim($name);
+    $conn->close();
 }
-
-
-if ($xls = SimpleXLSX::parse("files/students.xlsx")) {
-
-    echo "<table>";
-    $ommited_rows = 0;
-    foreach($xls->rows() as $r) {
-        if (($ommited_rows > $rows_to_omit) && is_valid_row($r)) {
-            $r[2] = clean_name($r[2]); //r[2] is the first name
-            echo '<tr><td>'.implode('</td><td>', $r ).'</td></tr>';        
-        }
-        $ommited_rows++;
-    }
-    echo "</table>";
-} else {
-    echo SimpleXLSX::parse_error();
-}
-
