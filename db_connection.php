@@ -1,19 +1,21 @@
 <?php
 
-$connection = NULL;
-
-function get_connection()
+class DataBase
 {
+    protected static $connection = NULL;
 
-    if ($connection == NULL) {
+    public static function get_connection()
+    {
+        if (self::$connection == null) {
 
-        $connection = new mysqli("172.17.0.2", "root", "1q2w3e", "d_izeu");
+            self::$connection = new mysqli("127.0.0.1", "root", "", "d_izeu");
+        }
+
+        if (self::$connection->connect_error) {
+            echo self::$connection->connect_error;
+            exit();
+        }
+
+        return self::$connection;
     }
-
-    if ($connection->connect_error) {
-        echo $connection->connect_error;
-        exit();
-    }
-
-    return $connection;
 }
