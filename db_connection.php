@@ -8,7 +8,7 @@ class DataBase
     {
         if (self::$connection == null) {
 
-            self::$connection = new mysqli("127.0.0.1", "root", "", "d_izeu");
+            self::$connection = new mysqli("127.0.0.1", "root", "1q2w3e", "d_izeu");
         }
 
         if (self::$connection->connect_error) {

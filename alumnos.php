@@ -32,6 +32,8 @@ if (!empty($a_data)) {
             $grupo_sangre = "'{$grupo_sangre}'";
             $sangre_rh = "'{$sangre_rh}'";
         }
+        
+        if (trim($row[2]) == "") continue;
 
         $sql = "INSERT IGNORE INTO persona (id_persona, tipo_persona, nombre, a_paterno, a_materno, nacionalidad, sangre_grupo, sangre_rh, activo) VALUES ";
         $sql .= "(0, 'Alumno', '{$row[2]}', '{$row[3]}', '{$row[4]}', 'Mexicana', {$grupo_sangre}, {$sangre_rh}, '1');";
@@ -71,6 +73,6 @@ if (!empty($a_data)) {
         }
     }
 
-    echo "\nData importation finished!";
+    echo "\nData importation finished!\n";
     $conn->close();
 }
